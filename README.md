@@ -1,3 +1,3 @@
 # DealingWithData
 
-# This is a repository of how we deal with data and plot it.
+This is a repository of how Rapf Lab deals with data and plotting.
