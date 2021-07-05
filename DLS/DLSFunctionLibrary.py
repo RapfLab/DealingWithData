@@ -140,22 +140,24 @@ def initializeExponentialModelParams(Temp):
   # INSTRUMENT PARAMETERS
   # Change these values depending on your experimental setup
   # =============================================================================
-  VISCOSITY = 1 #cP
-  TEMPERATURE = Temp #K
-  print(TEMPERATURE)
-  LASER_WAVELENGTH = 633 #nm 
-  DETECTION_ANGLE = np.pi / 2
-  REFRACTIVE_INDEX = 1.333
+    VISCOSITY = 1 #cP
+    TEMPERATURE = Temp #K
+    #print(TEMPERATURE)
+    LASER_WAVELENGTH = 640 #nm 
+    DETECTION_ANGLE = np.pi / 2
+    REFRACTIVE_INDEX = 1.333
 
   # =============================================================================
   # Calculate Prefactor Based on Instrument Parameters
   # =============================================================================
-  q = ( 4 * np.pi * REFRACTIVE_INDEX / (LASER_WAVELENGTH * 10**-9) ) * np.sin(DETECTION_ANGLE / 2)
-  a_D = 1.38e-23 * TEMPERATURE / ( 6 * np.pi * VISCOSITY/1000 )
-  PreFactor = 2 * q**2 * a_D
+    q = ( 4 * np.pi * REFRACTIVE_INDEX / (LASER_WAVELENGTH * 10**-9) ) * np.sin(DETECTION_ANGLE / 2)
+    a_D = 1.38e-23 * TEMPERATURE / ( 6 * np.pi * VISCOSITY/1000 )
+    PreFactor = 2 * q**2 * a_D
+    #print(q)
+    #print(a_D)
 
-  paramDict = {"PreFactor": PreFactor};
-  return paramDict
+    paramDict = {"PreFactor": PreFactor};
+    return paramDict
 
 
 # =============================================================================
