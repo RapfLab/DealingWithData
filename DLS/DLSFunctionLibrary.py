@@ -50,6 +50,12 @@ def ReadUTSA(FILE):
     
     return [data,num_meas]
 
+def ReadALV_KRW(FILE):
+    data = pd.read_excel(FILE, header = None)
+    data = data.drop(data.columns[[2,3,4]],axis = 1)
+    data = data.rename(columns = {data.columns[0]: "t_ms",data.columns[1]: "C_1"})
+    num_meas = int(len(data.columns)-1)
+    return [data,num_meas]
 
 def SplitTime(date, time):
     date = date.split('\t')
