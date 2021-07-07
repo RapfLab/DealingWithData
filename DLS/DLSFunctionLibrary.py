@@ -32,6 +32,31 @@ def ReadFile(FILE, file_specifics):
    
     return [date, time, x_corr, scatter_data]
 
+def ReadUTSA(FILE):
+    data = pd.read_csv(FILE, encoding= 'unicode_escape', skiprows = 1)
+    num_meas = int(len(data.columns)/2)
+
+    if num_meas == 5:
+        data = data.drop(data.columns[[2,4,6,8]], axis = 1)#,inplace = True)
+        data = data.rename(columns={data.columns[0]: "t_us",data.columns[1]: "C_1",
+                                data.columns[2]: "C_2", data.columns[3]: "C_3",
+                                data.columns[4]: "C_4",data.columns[5]: "C_5"})
+    elif num_meas == 3:
+        data = data.drop(data.columns[[2,4]], axis = 1)#,inplace = True)
+        data = data.rename(columns={data.columns[0]: "t_us",data.columns[1]: "C_1",
+                                data.columns[2]: "C_2", data.columns[3]: "C_3"})
+    else: 
+        print("Check the number of measurements")
+    
+    return [data,num_meas]
+
+def ReadALV_KRW(FILE):
+    data = pd.read_excel(FILE, header = None)
+    data = data.drop(data.columns[[2,3,4]],axis = 1)
+    data = data.rename(columns = {data.columns[0]: "t_ms",data.columns[1]: "C_1"})
+    num_meas = int(len(data.columns)-1)
+    return [data,num_meas]
+
 def SplitTime(date, time):
     date = date.split('\t')
     date = date[1].split('\n')
@@ -135,27 +160,29 @@ def DLSSaveData(x,y, GraphType, FilePrefix,z = None, zz = None):
     np.savetxt(FilePrefix+'_'+GraphType+'.txt', columns, delimiter = '\t')
     
 
-def initializeExponentialModelParams(Temp):
+def initializeExponentialModelParams(Temp, Laser, Visc):
   # =============================================================================
   # INSTRUMENT PARAMETERS
   # Change these values depending on your experimental setup
   # =============================================================================
-  VISCOSITY = 1 #cP
-  TEMPERATURE = Temp #K
-  print(TEMPERATURE)
-  LASER_WAVELENGTH = 633 #nm 
-  DETECTION_ANGLE = np.pi / 2
-  REFRACTIVE_INDEX = 1.333
+    VISCOSITY = Visc #cP
+    TEMPERATURE = Temp #K
+    #print(TEMPERATURE)
+    LASER_WAVELENGTH = Laser #nm 
+    DETECTION_ANGLE = np.pi / 2
+    REFRACTIVE_INDEX = 1.333
 
   # =============================================================================
   # Calculate Prefactor Based on Instrument Parameters
   # =============================================================================
-  q = ( 4 * np.pi * REFRACTIVE_INDEX / (LASER_WAVELENGTH * 10**-9) ) * np.sin(DETECTION_ANGLE / 2)
-  a_D = 1.38e-23 * TEMPERATURE / ( 6 * np.pi * VISCOSITY/1000 )
-  PreFactor = 2 * q**2 * a_D
+    q = ( 4 * np.pi * REFRACTIVE_INDEX / (LASER_WAVELENGTH * 10**-9) ) * np.sin(DETECTION_ANGLE / 2)
+    a_D = 1.38e-23 * TEMPERATURE / ( 6 * np.pi * VISCOSITY/1000 )
+    PreFactor = 2 * q**2 * a_D
+    #print(q)
+    #print(a_D)
 
-  paramDict = {"PreFactor": PreFactor};
-  return paramDict
+    paramDict = {"PreFactor": PreFactor};
+    return paramDict
 
 
 # =============================================================================
